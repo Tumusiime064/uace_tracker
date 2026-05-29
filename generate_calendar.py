@@ -2,11 +2,8 @@ from ics import Calendar, Event
 from ics.alarm import DisplayAlarm
 from datetime import datetime, timedelta
 
-# Create a new calendar instance
 cal = Calendar()
 
-# Define your standard timetable blocks
-# (Adjust the hours/minutes here to match your exact dashboard setup)
 sessions = [
     {
         "name": "Formula Blitz (PCM)",
@@ -28,28 +25,31 @@ sessions = [
     }
 ]
 
-# Populate the calendar with a daily repeating rule for each session
 for session in sessions:
     e = Event()
     e.name = session["name"]
     e.description = session["desc"]
     
-    # Set a base date (Today) combined with the session times
-    today_str = datetime.now().strftime("%Y-%m-%d")
-    e.begin = f"{today_str} {session['start_time']}"
-    e.end = f"{today_str} {session['end_time']}"
+    # Calculate correct dates
+    base_date = datetime.now()
+    start_dt = datetime.strptime(f"{base_date.strftime('%Y-%m-%d')} {session['start_time']}", "%Y-%m-%d %H:%M:%S")
+    end_dt = datetime.strptime(f"{base_date.strftime('%Y-%m-%d')} {session['end_time']}", "%Y-%m-%d %H:%M:%S")
     
-    # Crucial: Force the session to repeat every single day automatically
+    # If the session ends past midnight, push the end date to tomorrow
+    if end_dt <= start_dt:
+        end_dt += timedelta(days=1)
+        
+    e.begin = start_dt
+    e.end = end_dt
+    
     e.extra.append("RRULE:FREQ=DAILY")
     
-    # Attach an automated reminder popup alarm (10 minutes before session)
     alarm = DisplayAlarm(trigger=timedelta(minutes=-10))
     e.alarms.append(alarm)
     
     cal.events.add(e)
 
-# Save to an installable file
 with open("static/uace_schedule.ics", "w") as f:
     f.writelines(cal.serialize_iter())
 
-print("Success: static/uace_schedule.ics has been generated with all sessions mapped!")
+print("Success: static/uace_schedule.ics has been generated cleanly across midnight!")
