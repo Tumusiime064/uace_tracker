@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moses 20-Point UACE Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased min-h-screen">
+
+    <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-black tracking-wider text-emerald-400">MISSION: 20 POINTS</h1>
+            <p class="text-sm text-gray-400 font-medium">Candidate: <span class="text-gray-200">Moses</span> | Target: PCM + Sub ICT & GP</p>
+        </div>
+        <div class="bg-emerald-950/40 border border-emerald-500/30 px-4 py-2 rounded-xl text-center">
+            <span class="block text-xs font-bold uppercase tracking-widest text-emerald-500">Days to UACE Finals</span>
+            <span class="text-2xl font-black text-emerald-300">{{ days_left }} Days</span>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-8">
+        
+        <div class="bg-gradient-to-r from-blue-950 to-indigo-950 border border-blue-800/40 p-5 rounded-2xl shadow-xl">
+            <h3 class="text-blue-400 text-xs font-bold uppercase tracking-widest mb-1">Feynman Reconstruction Mindset</h3>
+            <p class="text-gray-300 text-sm md:text-base italic">"Do not read to remember. Reconstruct the systems from absolute scratch on a blank paper until you cannot get them wrong."</p>
+        </div>
+
+        <section class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
+            <div class="p-5 border-b border-gray-800 bg-gray-900/80">
+                <h2 class="text-lg font-bold text-gray-200">The High-Performer Weekly Blueprint</h2>
+                <p class="text-xs text-gray-400 mt-1">💡 Pro-tip: Click on any active code tag (e.g., P1, C3, M1) to view its underlying syllabus checklist down below.</p>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                        <tr class="bg-gray-950/60 text-gray-400 text-xs uppercase font-semibold tracking-wider border-b border-gray-800">
+                            <th class="p-4 w-40">Time Block</th>
+                            <th class="p-4">Mon</th><th class="p-4">Tue</th><th class="p-4">Wed</th>
+                            <th class="p-4">Thu</th><th class="p-4">Fri</th><th class="p-4">Sat</th>
+                            <th class="p-4">Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800/60 text-sm">
+                        {% for row in timetable %}
+                        <tr class="hover:bg-gray-800/20 transition-colors">
+                            <td class="p-4 font-mono font-bold text-gray-400 bg-gray-950/20 text-xs">{{ row.time }}</td>
+                            
+                            {% for day in ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] %}
+                            <td class="p-3">
+                                {% if 'M1' in row[day] or 'M2' in row[day] %}
+                                <button onclick="showSyllabus('{{ 'M1' if 'M1' in row[day] else 'M2' }}')" class="w-full text-left bg-blue-950/40 border border-blue-500/30 text-blue-300 px-2.5 py-1.5 rounded-lg font-medium hover:bg-blue-900/40 transition text-xs">
+                                    {{ row[day] }}
+                                </button>
+                                {% elif 'P1' in row[day] or 'P2' in row[day] or 'P3' in row[day] %}
+                                <button onclick="showSyllabus('{{ 'P1' if 'P1' in row[day] else ('P2' if 'P2' in row[day] else 'P3') }}')" class="w-full text-left bg-red-950/40 border border-red-500/30 text-red-300 px-2.5 py-1.5 rounded-lg font-medium hover:bg-red-900/40 transition text-xs">
+                                    {{ row[day] }}
+                                </button>
+                                {% elif 'C1' in row[day] or 'C2' in row[day] or 'C3' in row[day] %}
+                                <button onclick="showSyllabus('{{ 'C1' if 'C1' in row[day] else ('C2' if 'C2' in row[day] else 'C3') }}')" class="w-full text-left bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 px-2.5 py-1.5 rounded-lg font-medium hover:bg-emerald-900/40 transition text-xs">
+                                    {{ row[day] }}
+                                </button>
+                                {% elif 'BREAK' in row[day] or 'LUNCH' in row[day] or 'REST' in row[day] or 'SUPPER' in row[day] %}
+                                <span class="text-gray-600 text-xs italic block px-2.5 py-1.5">{{ row[day] }}</span>
+                                {% else %}
+                                <span class="bg-gray-800 text-gray-300 px-2.5 py-1.5 rounded-lg text-xs font-medium block border border-gray-700/50">
+                                    {{ row[day] }}
+                                </span>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="syllabus-box" class="hidden bg-gray-900 border border-indigo-900/50 rounded-2xl p-6 shadow-2xl transition-all duration-300">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-4 mb-4">
+                <h2 id="syllabus-title" class="text-xl font-black text-indigo-400 tracking-wide">Select a Module</h2>
+                <button onclick="document.getElementById('syllabus-box').classList.add('hidden')" class="text-gray-400 hover:text-gray-200 text-xs uppercase font-bold tracking-widest bg-gray-800 px-3 py-1 rounded-lg">Close</button>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <h4 class="text-xs uppercase font-bold text-gray-400 tracking-wider mb-2">Core Content Framework</h4>
+                    <ul id="syllabus-list" class="space-y-2 text-sm text-gray-300 list-disc list-inside">
+                        </ul>
+                </div>
+                <div class="bg-gray-950/60 p-4 rounded-xl border border-gray-800 space-y-3">
+                    <h4 class="text-xs uppercase font-bold text-amber-500 tracking-wider">Execution Guidelines</h4>
+                    <div class="space-y-2 text-xs text-gray-400">
+                        <p><strong class="text-gray-200">Calculations:</strong> Dedicate 70% of the session to working through old UNEB numbers step-by-step.</p>
+                        <p><strong class="text-gray-200">Theory & Derivations:</strong> Use the Feynman approach to manually reconstruct any core derivation or periodic system trend on a blank template sheet.</p>
+                        <p><strong class="text-gray-200">Experiments:</strong> Memorize the precise 2D apparatus layout, critical procedural steps, and specific error-handling techniques required for structural points.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const syllabusData = {{ syllabus|tojson }};
+
+        function showSyllabus(code) {
+            const data = syllabusData[code];
+            if (!data) return;
+
+            document.getElementById('syllabus-title').innerText = `${code} Module: ${data.title}`;
+            
+            const listContainer = document.getElementById('syllabus-list');
+            listContainer.innerHTML = '';
+            
+            data.topics.forEach(topic => {
+                const li = document.createElement('li');
+                li.className = "py-1 border-b border-gray-800/40 text-gray-300 leading-relaxed";
+                li.innerText = topic;
+                listContainer.appendChild(li);
+            });
+
+            const box = document.getElementById('syllabus-box');
+            box.classList.remove('hidden');
+            box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
