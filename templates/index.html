@@ -134,3 +134,10 @@
   }
 </body>
 </html>
+<link rel="manifest" href="/static/manifest.json">
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/static/sw.js")
+      .then(() => console.log("Mobile PWA Registered Successfully"));
+  }
+</script>
