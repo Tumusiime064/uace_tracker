@@ -131,3 +131,48 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
     app.run(debug=True)
+
+@app.route('/download-calendar')
+def download_calendar():
+    ics_content = """BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Moses UACE Tracker//EN
+BEGIN:VEVENT
+SUMMARY:Formula Blitz (PCM)
+DESCRIPTION:Early morning core formula revision for maximum UACE points.
+DTSTART;TZID=Africa/Kampala:20260530T053000
+DTEND;TZID=Africa/Kampala:20260530T060000
+RRULE:FREQ=DAILY
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Pure Math & Physics Deep Dive
+DESCRIPTION:Late-night intensive problem solving and tough numbers tracking.
+DTSTART;TZID=Africa/Kampala:20260530T200000
+DTEND;TZID=Africa/Kampala:20260530T230000
+RRULE:FREQ=DAILY
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Chemistry & Subsidiary ICT Review
+DESCRIPTION:Final late-night block covering organic mechanisms and tech concepts.
+DTSTART;TZID=Africa/Kampala:20260530T230000
+DTEND;TZID=Africa/Kampala:20260531T010000
+RRULE:FREQ=DAILY
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR"""
+    from flask import Response
+    return Response(ics_content, mimetype='text/calendar', headers={'Content-Disposition': 'attachment; filename=uace_schedule.ics'})
